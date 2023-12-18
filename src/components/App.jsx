@@ -3,15 +3,20 @@ import { ContactForm } from './ContactForm';
 import { Filter } from './Filter';
 import { ContactList } from './ContactList';
 import s from './PhoneBook.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from '../redux/phonebook/selectors';
+import { addContact, deleteContact } from '../redux/phonebook/actions';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  // const [contacts, setContacts] = useState([]);
+  const contacts = useSelector(selectContacts);
   const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts');
     if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
+      // dispatch(setContacts(JSON.parse(savedContacts)))
     }
   }, []);
 
@@ -34,11 +39,11 @@ export const App = () => {
       alert(`${newContact.name} is already in contacts.`);
       return;
     }
-    setContacts(prevState => [...prevState, newContact]);
+    dispatch(addContact(newContact));
   };
 
   const handleDeleteContact = id => {
-    setContacts(prevState => prevState.filter(contact => contact.id !== id));
+    dispatch(deleteContact(id));
   };
 
   const filteredContacts = getFilteredContacts();
